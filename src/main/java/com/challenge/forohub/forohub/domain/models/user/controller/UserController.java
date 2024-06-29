@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.challenge.forohub.forohub.domain.models.user.dto.UserLoginDTO;
 import com.challenge.forohub.forohub.domain.models.user.dto.UserValidationDTO;
 import com.challenge.forohub.forohub.domain.models.user.service.IUserService;
+import com.challenge.forohub.forohub.infra.security.UserDetailsServiceImpl;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -20,10 +22,12 @@ import jakarta.validation.Valid;
 public class UserController {
 
     private IUserService service;
+    private UserDetailsServiceImpl authService;   
 
-    public UserController(IUserService service) {
+    public UserController(IUserService service, UserDetailsServiceImpl authService) {
         this.service = service;
-    }    
+        this.authService = authService;
+    }
 
     @PostMapping("/new")
     @Transactional(readOnly = false)
@@ -37,6 +41,10 @@ public class UserController {
     @Operation(summary = "Se busca un usuario por id", description = "Se ingresa el id después del /user/")
     public ResponseEntity<?> findUserById(@PathVariable Long id){
         return service.findUser(id);
+    }
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody UserLoginDTO userLogin){
+        return authService.loginUser(userLogin);
     }
 }
 
