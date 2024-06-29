@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "secret.key",
+    "type": "String",
+    "description": "secret key"
+  },
+  {
+    "name": "time.expiration",
+    "type": "Integer",
+    "description": "Time expiration expressed in seconds"
+  }
+]}
