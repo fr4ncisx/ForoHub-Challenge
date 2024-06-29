@@ -5,6 +5,9 @@ import com.challenge.forohub.forohub.domain.models.answer.persistence.Answer;
 import com.challenge.forohub.forohub.domain.models.answer.persistence.AnswerRepository;
 import com.challenge.forohub.forohub.domain.models.topic.persistence.TopicRepository;
 import com.challenge.forohub.forohub.domain.models.user.persistence.UserRepository;
+import com.challenge.forohub.forohub.infra.errors.TopicNotFoundException;
+import com.challenge.forohub.forohub.infra.errors.UserNotFoundException;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +41,14 @@ public class AnswerServiceImpl implements IAnswerService {
     var topicExists = topicRepository.findById(topic_id);
     if (topicExists.isPresent() && userExists.isPresent()){
       answerRepository.save(answer);
-      // hacer un count select en response usando el topic_id 
       return new ResponseEntity<>(new AnswerDTO(answer.getMessage()),
       HttpStatus.CREATED);
     } else if(!topicExists.isPresent() && !userExists.isPresent()){
-      throw new RuntimeException("No existe topico y usuario");
+      throw new TopicNotFoundException("No existe topico y usuario");
     } else if(!topicExists.isPresent()){
-      throw new RuntimeException("No existe el topico");
+      throw new TopicNotFoundException("No existe el topico");
     } else {
-      throw new RuntimeException("No existe el usuario");
+      throw new UserNotFoundException("No existe el usuario");
     }    
   }
 }

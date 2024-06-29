@@ -15,8 +15,7 @@ CREATE TABLE
         creation_date date,
         course varchar(100),
         status varchar(50),
-        user_id bigint not null,
-        answers TEXT,
+        user_id bigint,
         PRIMARY KEY (id),
         FOREIGN KEY (user_id) references User (id)
     );
@@ -25,13 +24,12 @@ CREATE TABLE
     Answer (
         id bigint auto_increment,
         message TEXT,
-        topic_id bigint not null,
+        topic_id bigint,
         creation_date DATE,
-        user_id bigint not null,
+        user_id bigint,
         solved boolean,
         PRIMARY KEY (id),
         FOREIGN KEY (user_id) references User (id),
         FOREIGN KEY (topic_id) references Topic (id)
     );
-
     

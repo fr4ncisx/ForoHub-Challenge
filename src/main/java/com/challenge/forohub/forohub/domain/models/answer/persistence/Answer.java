@@ -32,7 +32,7 @@ public class Answer {
   private Long id;
   private String message;
 
-  @ManyToOne
+  @ManyToOne 
   private Topic topic;
 
   @Column(name = "creation_date")

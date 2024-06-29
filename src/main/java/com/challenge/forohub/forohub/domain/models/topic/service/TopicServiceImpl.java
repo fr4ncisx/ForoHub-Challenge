@@ -3,6 +3,8 @@ package com.challenge.forohub.forohub.domain.models.topic.service;
 import com.challenge.forohub.forohub.domain.models.answer.persistence.AnswerRepository;
 import com.challenge.forohub.forohub.domain.models.enums.Status;
 import com.challenge.forohub.forohub.domain.models.topic.dto.TopicDTO;
+import com.challenge.forohub.forohub.domain.models.topic.dto.TopicDetailsDTO;
+import com.challenge.forohub.forohub.domain.models.topic.dto.TopicResponseDTO;
 import com.challenge.forohub.forohub.domain.models.topic.dto.TopicUpdatedDTO;
 import com.challenge.forohub.forohub.domain.models.topic.dto.TopicValidationDTO;
 import com.challenge.forohub.forohub.domain.models.topic.persistence.Topic;
@@ -12,6 +14,8 @@ import com.challenge.forohub.forohub.domain.models.user.persistence.UserReposito
 import com.challenge.forohub.forohub.infra.errors.DuplicatedEntryError;
 import com.challenge.forohub.forohub.infra.errors.TopicNotFoundException;
 import com.challenge.forohub.forohub.infra.errors.UserOwnershipViolationException;
+
+import java.time.LocalDate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +46,7 @@ public class TopicServiceImpl implements ITopicService {
     Topic topic = new Topic(validationDTO, userFound);
     if (!topicRepository.findByTitle(topic.getTitle()).isPresent()) {
       topicRepository.save(topic);
-      return new ResponseEntity<>(new TopicDTO(topic), HttpStatus.CREATED);
+      return new ResponseEntity<>(new TopicDetailsDTO(topic), HttpStatus.CREATED);
     } else {
       throw new DuplicatedEntryError(
         "No se pueden crear topicos con títulos iguales"
@@ -90,11 +94,11 @@ public class TopicServiceImpl implements ITopicService {
 
   @Override
   public ResponseEntity<?> deleteTopicById(Long topic_id) {
-    var topicFound = topicRepository.findById(topic_id); 
-    if(topicFound.isPresent()){    
+    var topicFound = topicRepository.findById(topic_id);
+    if(topicFound.isPresent()){   
       answerRepository.removeByTopicId(topic_id);
-      topicRepository.removeById(topic_id);
-      return ResponseEntity.ok().build();
+      topicRepository.removeById(topic_id);      
+      return ResponseEntity.ok(new TopicResponseDTO("Topico eliminado exitosamente", LocalDate.now().toString()));
     }  
     throw new TopicNotFoundException("El topico no existe");
   }
