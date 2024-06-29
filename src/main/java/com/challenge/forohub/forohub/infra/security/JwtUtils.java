@@ -20,9 +20,6 @@ public class JwtUtils {
   @Value("{SECRET.KEY}")
   private String secretKey;
 
-  @Value("{TIME.EXPIRATION}")
-  private String timeExpiration;
-
   public String generateToken(Authentication auth) {
     Algorithm algo = Algorithm.HMAC256(secretKey);
     return JWT.create()

@@ -12,4 +12,5 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
   Optional<Topic> findByTitle(String title);
 
   Page<Topic> findByStatus(Pageable pg, Status status);
+  void removeById(Long id);
 }

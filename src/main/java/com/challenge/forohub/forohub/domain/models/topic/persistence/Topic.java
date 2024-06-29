@@ -50,7 +50,7 @@ public class Topic {
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
-  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+  @OneToMany(fetch = FetchType.EAGER)
   @JoinColumn(name = "topic_id")
   private List<Answer> answer;
 
@@ -67,9 +67,21 @@ public class Topic {
     this.id = topic_id;
   }
 
-  public List<AnswerDetailsDTO> detailedAnswers(){
+  public List<AnswerDetailsDTO> detailedAnswers() {
     return answer.stream()
-    .map(a -> new AnswerDetailsDTO(a.getUser().getUsername(), a.getMessage(), a.getDate(), a.getSolved()))
-    .collect(Collectors.toList());
+        .map(a -> new AnswerDetailsDTO(a.getUser().getUsername(), a.getMessage(), a.getDate(), a.getSolved()))
+        .collect(Collectors.toList());
+  }
+
+  public void updateTopic(TopicValidationDTO validationDTO) {
+    if (!validationDTO.title().isBlank()) {
+      this.title = validationDTO.title();
+    }
+    if (!validationDTO.message().isBlank()) {
+      this.message = validationDTO.message();
+    }
+    if (!validationDTO.course().isBlank()) {
+      this.course = validationDTO.course();
+    }
   }
 }

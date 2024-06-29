@@ -22,7 +22,8 @@ public class TopicController {
 
     private ITopicService topicService;
     private IUserService userService;
-    
+
+
     public TopicController(ITopicService topicService, IUserService userService) {
       this.topicService = topicService;
       this.userService = userService;
@@ -48,8 +49,14 @@ public class TopicController {
     public ResponseEntity<?> findById(@PathVariable Long id){
       return topicService.findTopicById(id);
     }
-    @PutMapping("edit/{id}")
-    public ResponseEntity<?> updateTopic(@Valid @RequestBody TopicValidationDTO dto, @PathVariable Long id){
-      return null;
+    @PutMapping("/edit/{id}/user/{user_id}")
+    @Transactional
+    public ResponseEntity<?> updateTopic(@Valid @RequestBody TopicValidationDTO dto, @PathVariable Long id, @PathVariable Long user_id){
+      return topicService.updateTopicById(id, dto, user_id);
+    }
+    @DeleteMapping("/delete/{topic_id}")
+    @Transactional
+    public ResponseEntity<?> deleteTopic(@PathVariable Long topic_id){
+      return topicService.deleteTopicById(topic_id);
     }
 }

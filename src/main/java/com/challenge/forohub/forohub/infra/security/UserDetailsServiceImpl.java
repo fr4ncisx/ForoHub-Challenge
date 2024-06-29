@@ -41,7 +41,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
-
     }
 
     public ResponseEntity<?> loginUser(UserLoginDTO userLogin) {
