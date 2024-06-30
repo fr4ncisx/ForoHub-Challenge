@@ -1,5 +1,9 @@
 package com.challenge.forohub.forohub.domain.models.topic.persistence;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.challenge.forohub.forohub.domain.models.answer.dto.AnswerDetailsDTO;
 import com.challenge.forohub.forohub.domain.models.answer.persistence.Answer;
 import com.challenge.forohub.forohub.domain.models.enums.Status;
@@ -18,11 +22,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

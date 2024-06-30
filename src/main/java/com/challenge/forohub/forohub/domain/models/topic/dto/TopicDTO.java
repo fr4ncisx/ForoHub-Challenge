@@ -1,10 +1,11 @@
 package com.challenge.forohub.forohub.domain.models.topic.dto;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.challenge.forohub.forohub.domain.models.answer.dto.AnswerDetailsDTO;
 import com.challenge.forohub.forohub.domain.models.enums.Status;
 import com.challenge.forohub.forohub.domain.models.topic.persistence.Topic;
-import java.time.LocalDate;
-import java.util.List;
 
 public record TopicDTO(
     String title,
@@ -14,6 +15,7 @@ public record TopicDTO(
     Status status,
     String course,
     List<AnswerDetailsDTO> answers) {
+
   public TopicDTO(Topic topic) {
     this(
         topic.getTitle(),
@@ -24,5 +26,4 @@ public record TopicDTO(
         topic.getCourse(),
         topic.detailedAnswers());
   }
-
 }

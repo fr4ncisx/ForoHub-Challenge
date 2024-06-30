@@ -30,19 +30,20 @@ public class JwtUtils {
         .sign(algo);
   }
 
-  public DecodedJWT validateToken(String token) {
-    try {
-      Algorithm algo = Algorithm.HMAC256(secretKey);
-      JWTVerifier verifier = JWT.require(algo)
-      .withIssuer("Foro hub tokenizer")
-      .build();
-      DecodedJWT decodedJWT = verifier.verify(token);
-      return decodedJWT;      
-    } catch (JWTVerificationException e) {
-      throw new JWTVerificationException("Token inválido");
-    }
+  public DecodedJWT validateToken(String token){
+      try {
+        Algorithm algo = Algorithm.HMAC256(secretKey);
+          JWTVerifier verifier = JWT.require(algo)
+              .withIssuer("Foro hub tokenizer")
+              .build();
+          DecodedJWT decodedJWT = verifier.verify(token);
+          return decodedJWT;        
+      } catch(JWTVerificationException e){
+        throw e;
+      }
   }
-  public String extractUsername(DecodedJWT decodedJWT){
+
+  public String extractUsername(DecodedJWT decodedJWT) {
     return decodedJWT.getSubject().toString();
   }
 }

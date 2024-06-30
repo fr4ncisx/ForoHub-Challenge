@@ -26,7 +26,6 @@ public class GlobalErrorHandler {
     var errorDetails = ex.getError();
     return ResponseEntity.badRequest().body(errorDetails);
   }
-
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<?> emptyRequestBody(
     HttpMessageNotReadableException ex
@@ -36,7 +35,6 @@ public class GlobalErrorHandler {
     );
     return ResponseEntity.badRequest().body(error);
   }
-
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<?> validationExceptions(
     MethodArgumentNotValidException ex) {

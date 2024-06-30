@@ -1,5 +1,13 @@
 package com.challenge.forohub.forohub.domain.models.topic.service;
 
+import java.time.LocalDate;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import com.challenge.forohub.forohub.domain.models.answer.persistence.AnswerRepository;
 import com.challenge.forohub.forohub.domain.models.enums.Status;
 import com.challenge.forohub.forohub.domain.models.topic.dto.TopicDTO;
@@ -15,21 +23,12 @@ import com.challenge.forohub.forohub.infra.errors.DuplicatedEntryError;
 import com.challenge.forohub.forohub.infra.errors.TopicNotFoundException;
 import com.challenge.forohub.forohub.infra.errors.UserOwnershipViolationException;
 
-import java.time.LocalDate;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 @Service
 public class TopicServiceImpl implements ITopicService {
 
-  private TopicRepository topicRepository;
-  private UserRepository userRepository;
-  private AnswerRepository answerRepository;
-
+  private final TopicRepository topicRepository;
+  private final UserRepository userRepository;
+  private final AnswerRepository answerRepository;
 
   public TopicServiceImpl(TopicRepository topicRepository, UserRepository userRepository,
       AnswerRepository answerRepository) {
@@ -40,17 +39,15 @@ public class TopicServiceImpl implements ITopicService {
 
   @Override
   public ResponseEntity<?> createTopic(
-    TopicValidationDTO validationDTO,
-    User userFound
-  ) {
+      TopicValidationDTO validationDTO,
+      User userFound) {
     Topic topic = new Topic(validationDTO, userFound);
     if (!topicRepository.findByTitle(topic.getTitle()).isPresent()) {
       topicRepository.save(topic);
       return new ResponseEntity<>(new TopicDetailsDTO(topic), HttpStatus.CREATED);
     } else {
       throw new DuplicatedEntryError(
-        "No se pueden crear topicos con títulos iguales"
-      );
+          "No se pueden crear topicos con títulos iguales");
     }
   }
 
@@ -59,7 +56,7 @@ public class TopicServiceImpl implements ITopicService {
     var activeTopics = topicRepository.findByStatus(pg, Status.ACTIVO);
     if (!activeTopics.isEmpty()) {
       var response = activeTopics
-      .map(list -> new TopicDTO(list));
+          .map(list -> new TopicDTO(list));
       return response;
     } else {
       throw new TopicNotFoundException("No se encontraron topicos");
@@ -69,7 +66,7 @@ public class TopicServiceImpl implements ITopicService {
   @Override
   public ResponseEntity<?> findTopicById(Long id) {
     var topicFound = topicRepository.findById(id);
-    if(topicFound.isPresent()){
+    if (topicFound.isPresent()) {
       return ResponseEntity.ok(new TopicDTO(topicFound.get()));
     } else {
       throw new TopicNotFoundException("El topico no fue encontrado");
@@ -80,26 +77,28 @@ public class TopicServiceImpl implements ITopicService {
   public ResponseEntity<?> updateTopicById(Long id, TopicValidationDTO validationDTO, Long user_id) {
     var findTopic = topicRepository.findById(id);
     var findUser = userRepository.findById(user_id);
-    if(findTopic.isPresent() && findUser.isPresent()){  
-      if(findTopic.get().getUser().getId() == findUser.get().getId()){ 
-      findTopic.get().updateTopic(validationDTO);
-      return ResponseEntity.ok(new TopicUpdatedDTO(validationDTO));
+    if (findTopic.isPresent() && findUser.isPresent()) {
+      Long idUserTopicOwner = findTopic.get().getUser().getId();
+      Long idUserFound = findUser.get().getId();
+      if (idUserTopicOwner.equals(idUserFound)) {
+        findTopic.get().updateTopic(validationDTO);
+        return ResponseEntity.ok(new TopicUpdatedDTO(validationDTO));
       } else {
         throw new UserOwnershipViolationException("El usuario no tiene los permisos para modificar el tópico");
-      }   
+      }
     } else {
-      throw new TopicNotFoundException("Usuario o topico inexistente"); 
+      throw new TopicNotFoundException("Usuario o topico inexistente");
     }
   }
 
   @Override
   public ResponseEntity<?> deleteTopicById(Long topic_id) {
     var topicFound = topicRepository.findById(topic_id);
-    if(topicFound.isPresent()){   
+    if (topicFound.isPresent()) {
       answerRepository.removeByTopicId(topic_id);
-      topicRepository.removeById(topic_id);      
+      topicRepository.removeById(topic_id);
       return ResponseEntity.ok(new TopicResponseDTO("Topico eliminado exitosamente", LocalDate.now().toString()));
-    }  
+    }
     throw new TopicNotFoundException("El topico no existe");
   }
 }
