@@ -17,7 +17,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 @Service
 public class JwtUtils {
 
-  @Value("{SECRET.KEY}")
+  @Value("${SECRET.KEY}")
   private String secretKey;
 
   public String generateToken(Authentication auth) {
